@@ -26,6 +26,7 @@
 	$(document).ready(function() {
 		bootstrapifyMessages();
 		bootstrapifyMessage();
+		bootstrapifyInputRadio();
 	});
 	
 	// <h:messages id="messages" infoClass="alert-info" warnClass="alert-warn" errorClass="alert-error" fatalClass="alert-success" globalOnly="true"/>
@@ -64,6 +65,19 @@
 			}
 			msgs.remove();
 		}
+	}
+	
+	// <h:inputRadio styleClass="input-radio"/>
+	function bootstrapifyInputRadio() {
+		$("input:radio").each(function() {
+			var label = $(this).siblings();
+			label.addClass("radio")
+				 .addClass("inline");
+			$(this).prependTo(label);
+		
+			label.appendTo(label.parents(".input-radio").parent());
+		});
+		$("table.input-radio").remove();
 	}
 	
 	// <h:message for="..." styleClass="help-inline" />
