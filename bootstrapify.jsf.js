@@ -21,71 +21,80 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 (function($) {
-	
-	// Ist das DOM geladen werden folgende Funktionen ausgeführt.
-	$(document).ready(function() {
-		bootstrapifyMessages();
-		bootstrapifyMessage();
-		bootstrapifyInputRadio();
-	});
-	
-	// <h:messages id="messages" infoClass="alert-info" warnClass="alert-warn" errorClass="alert-error" fatalClass="alert-success" globalOnly="true"/>
-	function bootstrapifyMessages() {
-		var msgs = $("#messages");
-		if (msgs.length > 0) {
-			var styleClasses=["alert-info", "alert-warn", "alert-error", "alert-success"];
-			for (var i = 0; i < styleClasses.length; i++) {
-				var styleClass = styleClasses[i];
-				
-				var msg = msgs.children("." + styleClass);
-				if (msg.length > 0) {
-					var block = $("<div class=\"alert\"></div>").addClass(styleClass);
-					var closeButton = $("<button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>");
-					block.append(closeButton);
-					
-					var heading;
-					switch (styleClass) {
-						case "alert-info" : heading = "Info"; break;
-						case "alert-warn" : heading = "Achtung"; break;
-						case "alert-error" : heading = "Fehler"; break;
-						case "alert-success" : heading = "✔"; break;
-					}
-					
-					if (msg.length > 1) {
-						block.addClass("alert-block");
-						block.append($("<h4></h4>").text(heading));
-						block.append($("<ul></ul>").append(msg));
-					} else {
-						block.append($("<strong></strong>").text(heading));
-						block.append(msg.text());
-					}
-					
-					msgs.parent().append(block);
-				}
-			}
-			msgs.remove();
-		}
-	}
-	
-	// <h:inputRadio styleClass="input-radio"/>
-	function bootstrapifyInputRadio() {
-		$("input:radio").each(function() {
-			var label = $(this).siblings();
-			label.addClass("radio")
-				 .addClass("inline");
-			$(this).prependTo(label);
-		
-			label.appendTo(label.parents(".input-radio").parent());
-		});
-		$("table.input-radio").remove();
-	}
-	
-	// <h:message for="..." styleClass="help-inline" />
-	function bootstrapifyMessage() {
-		$("form .help-inline").each(function() {
-			$(this).parents(".control-group").addClass("error");
-			$(this).siblings(".help-block").remove();
-		});
-	}
-	
-}(jQuery));
+
+    // credits: http://stackoverflow.com/questions/8584098/how-to-change-an-element-type-using-jquery#15554920
+    $.fn.changeElementType = function(newType) {
+        var newElements = [];
+
+        $(this).each(function() {
+            var attrs = {};
+
+            $.each(this.attributes, function(idx, attr) {
+                attrs[attr.nodeName] = attr.nodeValue;
+            });
+
+            var newElement = $("<" + newType + "/>", attrs).append($(this).contents());
+
+            $(this).replaceWith(newElement);
+
+            newElements.push(newElement);
+        });
+
+        return $(newElements);
+    };
+
+    function bootstrapifyButtons() {
+        $(".btn").each(function() {
+            var icon = $(this).attr("data-fa");
+            var val = $(this).attr("value");
+            $(this).removeAttr("value");
+            $(this).removeAttr("data-fa");
+            if (icon) {
+                $(this).html("<span class=\"fa " + icon + "\"></span> " + val);
+            } else {
+                $(this).html(val);
+            }
+            $(this).changeElementType("button");
+        });
+    }
+
+    // <h:messages id="messages" 
+    //             globalOnly="true"
+    //             infoClass="alert-info" 
+    //             warnClass="alert-warn"
+    //             errorClass="alert-error" 
+    //             fatalClass="alert-success" />
+    function bootstrapifyMessages() {
+        $("#messages").changeElementType("div");
+        $("#messages li").changeElementType("div");
+    }
+
+    // <h:inputRadio styleClass="input-radio"/>
+    function bootstrapifyInputRadio() {
+        $("input:radio").each(function() {
+            var label = $(this).siblings();
+            label.addClass("radio").addClass("inline");
+            $(this).prependTo(label);
+
+            label.appendTo(label.parents(".input-radio").parent());
+        });
+        $("table.input-radio").remove();
+    }
+
+    // <h:message for="..." styleClass="help-inline" />
+    function bootstrapifyMessage() {
+        $("form .help-inline").each(function() {
+            $(this).parents(".control-group").addClass("error");
+            $(this).siblings(".help-block").remove();
+        });
+    }
+
+    // Call these methods onload
+    $(document).ready(function() {
+        bootstrapifyButtons();
+        bootstrapifyMessages();
+        bootstrapifyMessage();
+        bootstrapifyInputRadio();
+    });
+
+})(jQuery);
