@@ -1,5 +1,5 @@
 /* 
- * Copyright 2013 Björn Rauapch
+ * Copyright 2013 Björn Raupach
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -44,7 +44,7 @@
     };
 
     function bootstrapifyButtons() {
-        $(".btn").each(function() {
+        $("input.btn").each(function() {
             var icon = $(this).attr("data-fa");
             var val = $(this).attr("value");
             $(this).removeAttr("value");
